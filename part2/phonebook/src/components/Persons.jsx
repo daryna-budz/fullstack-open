@@ -1,9 +1,9 @@
+import phonebook from '../services/phonebook'
 
-
-export default function Persons({ persons }){
+export default function Persons({ persons, deletePerson }){
     return (
         <>
-            {persons.map(person => <p key={person.id}>{person.name} {person.number}</p>)}
+            {persons.map(person => <div key={person.id}><p>{person.name} {person.number}</p> <button onClick={() => deletePerson(person.id)}>delete</button></div>)}
         </>
     )
 }
