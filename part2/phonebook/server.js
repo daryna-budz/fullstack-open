@@ -1,8 +1,21 @@
 
 import express from 'express'
+import morgan from 'morgan'
 const app = express()
 
 app.use(express.json())
+
+morgan.token('body', (request) => {
+  return JSON.stringify(request.body)
+})
+
+app.use((request, response, next) => {
+  if (request.method === 'POST') {
+    morgan(':method :url :status :body')(request, response, next)
+  } else {
+    morgan('tiny')(request, response, next)
+  }
+})
 
 let persons = [
   {
