@@ -4,7 +4,7 @@ A full-stack Phonebook application built as part of the [Full Stack Open](https:
 
 ## Online application
 
-[Open the deployed application](https://fullstack-open-psc7.onrender.com/api/persons)
+[Open the deployed application](https://fullstack-open-psc7.onrender.com)
 
 ## Technologies
 
