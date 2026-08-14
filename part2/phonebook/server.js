@@ -2,14 +2,17 @@
 import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
+import dotenv from 'dotenv'
+import Person from './models/person.js'
 
-
+dotenv.config()
 
 const app = express()
 
+app.use(express.static('dist'))
 app.use(express.json())
 app.use(cors())
-app.use(express.static('dist'))
+
 
 morgan.token('body', (request) => {
   return JSON.stringify(request.body)
@@ -23,89 +26,67 @@ app.use((request, response, next) => {
   }
 })
 
-let persons = [
-  {
-    id: 1,
-    name: "Arto Hellas",
-    number: "040-123456"
-  },
-  {
-    id: 2,
-    name: "Ada Lovelace",
-    number: "39-44-5323523"
-  },
-  {
-    id: 3,
-    name: "Dan Abramov",
-    number: "12-43-234345"
-  },
-  {
-    id: 4,
-    name: "Mary Poppendieck",
-    number: "39-23-6423122"
-  }
-]
-
 app.get('/api/persons', (request, response) => {
-  response.json(persons)
+  Person.find({}).then(persons => {
+    response.json(persons)
+  })
 })
 
 app.get('/api/persons/:id', (request, response) => {
-    const id = Number(request.params.id)
-    const person = persons.find(person => person.id === id)
-
-    if (person) {
-        response.json(person)
-    } else {
-        response.status(404).end()
-    }
+    Person.findById(request.params.id).then((person)=>{
+      response.json(person)
+    })
 })
 
 app.get('/info', (request, response) => {
   const time = new Date()
 
-  response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${time}</p>`)
+  Person.find({}).then((persons) => {
+    response.send(`<p>Phonebook has info for ${persons.length} people</p><p>${time}</p>`)
+  })
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  const person = persons.find(person => person.id === id)
-
-  if(person){
-    persons = persons.filter(person => person.id !== id)
+  Person.findByIdAndRemove(request.params.id).then((result) => {
     response.status(204).end()
-  }else {
-    response.status(404).end()
-  }
+  })
+  .catch((error) => {
+    console.log(error)
+    response.status(400).send({ error: 'malformatted id' })
+  })
 })
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body
+  const body = request.body
 
-  if(!person.name || !person.number){
+  if(!body.name || !body.number){
     return response.status(400).json({
       error: 'Name or number is missing'
     })
   }
 
-  if(persons.find(p => p.name === person.name)){
+  Person.findOne({ name: body.name }).then(existingPerson => {
+  if (existingPerson) {
     return response.status(400).json({
       error: 'Name must be unique'
     })
   }
 
-  const newPerson = {
-    id: Math.floor(Math.random() * 1000000),
-    name: person.name,
-    number: person.number
-  }
+  const person = new Person({
+    name: body.name,
+    number: body.number
+  })
 
-  persons = [...persons, newPerson]
-  response.json(newPerson)
+  person.save().then((savedPerson) => {
+    response.json(savedPerson)
+  })
 })
 
-const PORT = 3001
+const PORT = process.env.PORT
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
+})
+
+
 })
