@@ -108,6 +108,7 @@ const updatePerson = (id, newNumber) => {
       })
       .catch(error => {
         setMessage(error.response.data.error)
+
         setTimeout(() => {
           setMessage(null)
         }, 5000)
