@@ -8,7 +8,7 @@ if (process.argv.length < 3) {
   process.exit(1)
 }
 
-const url = process.env.MONGO_URL;
+const url = process.env.MONGO_URL
 
 
 mongoose.set('strictQuery',false)
@@ -22,10 +22,10 @@ const personSchema = new mongoose.Schema({
 const Person = mongoose.model('Person', personSchema)
 
 Person.find({}).then(result=>{
-    result.forEach((person) =>{
-        console.log(person)
-    })
-    mongoose.connection.close()
+  result.forEach((person) =>{
+    console.log(person)
+  })
+  mongoose.connection.close()
 })
 
 

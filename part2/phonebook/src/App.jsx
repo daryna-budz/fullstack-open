@@ -16,15 +16,15 @@ const App = () => {
 
   useEffect(()=>{
     phonebook
-        .getAll()
-        .then(response => {
-          console.log("Promise fulfilled!")
-          setPersons(response.data)
-        })
+      .getAll()
+      .then(response => {
+        console.log('Promise fulfilled!')
+        setPersons(response.data)
+      })
   }, [])
 
   const handleChange = (e) => {
-     setNewName(e.target.value)
+    setNewName(e.target.value)
   }
 
   const handleNumberChange = (e) => {
@@ -36,48 +36,48 @@ const App = () => {
   }
 
   const filteredPersons = persons.filter(person =>
-      person.name.toLowerCase().includes(filter.toLowerCase())
+    person.name.toLowerCase().includes(filter.toLowerCase())
   )
 
-const deletePerson = (id) => {
-  const person = persons.find(person => person.id === id)
+  const deletePerson = (id) => {
+    const person = persons.find(person => person.id === id)
 
-  const confirmDelete = window.confirm(
-    `Delete ${person.name}?`
-  )
+    const confirmDelete = window.confirm(
+      `Delete ${person.name}?`
+    )
 
-  if (confirmDelete) {
-    phonebook
-      .deletePerson(id)
-      .then(() => {
-        setPersons(prevPersons =>
-          prevPersons.filter(person => person.id !== id)
-        )
-      })
+    if (confirmDelete) {
+      phonebook
+        .deletePerson(id)
+        .then(() => {
+          setPersons(prevPersons =>
+            prevPersons.filter(person => person.id !== id)
+          )
+        })
+    }
   }
-}
 
-const updatePerson = (id, newNumber) => {
-  const person = persons.find(person => person.id === id)
+  const updatePerson = (id, newNumber) => {
+    const person = persons.find(person => person.id === id)
 
-  const confirmUpdate = window.confirm(
-    `${person.name} is already in the phonebook. Do you want to update their number?`
-  )
+    const confirmUpdate = window.confirm(
+      `${person.name} is already in the phonebook. Do you want to update their number?`
+    )
 
-  if (confirmUpdate) {
-    phonebook
-      .update(id, { ...person, number: newNumber })
-      .then(() => {
-        setPersons(prevPersons =>
-          prevPersons.map(person => person.id === id ? { ...person, number: newNumber } : person)
-        )
-        setMessage(`Updated ${person.name}'s number`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
-      })
+    if (confirmUpdate) {
+      phonebook
+        .update(id, { ...person, number: newNumber })
+        .then(() => {
+          setPersons(prevPersons =>
+            prevPersons.map(person => person.id === id ? { ...person, number: newNumber } : person)
+          )
+          setMessage(`Updated ${person.name}'s number`)
+          setTimeout(() => {
+            setMessage(null)
+          }, 5000)
+        })
+    }
   }
-}
 
   const addPerson =(e) =>{
     e.preventDefault()
